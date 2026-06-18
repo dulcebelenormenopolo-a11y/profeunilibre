@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProfeLibreUNI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1a;--surface:#111827;--surface2:#1a2235;--accent:#00e5ff;--accent2:#7c3aed;--text:#f0f4ff;--muted:#6b7a99;--border:rgba(0,229,255,0.12);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(0,229,255,.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(124,58,237,.08) 0%,transparent 60%);pointer-events:none;z-index:0;}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;background:rgba(10,14,26,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;}.logo span{color:var(--accent);}
+.nav-links{display:flex;gap:1.5rem;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.875rem;font-weight:500;cursor:pointer;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--accent);}
+.nav-right{display:flex;gap:.5rem;align-items:center;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.drawer{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(10,14,26,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:99;padding:1rem;flex-direction:column;gap:.25rem;}
+.drawer.open{display:flex;}
+.drawer a{padding:.75rem 1rem;color:var(--muted);text-decoration:none;font-size:.95rem;border-radius:10px;cursor:pointer;transition:all .2s;}
+.drawer a.active,.drawer a:hover{background:rgba(0,229,255,.08);color:var(--accent);}
+.drawer-btns{display:flex;flex-direction:column;gap:.5rem;margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border);}
+/* BOTTOM NAV */
+.bnav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(10,14,26,.97);backdrop-filter:blur(20px);border-top:1px solid var(--border);z-index:100;padding:.4rem 0 .8rem;}
+.bnav-items{display:flex;justify-content:space-around;}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:.15rem;cursor:pointer;padding:.35rem .75rem;color:var(--muted);font-size:.6rem;font-weight:500;background:none;border:none;font-family:'DM Sans',sans-serif;transition:color .2s;}
+.bnav-item.active{color:var(--accent);}
+.bnav-icon{font-size:1.2rem;}
+/* BUTTONS */
+.btn{padding:.5rem 1.1rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;border:none;transition:all .2s;}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+.btn-primary{background:var(--accent);color:#000;font-weight:600;}
+.btn-primary:hover{background:#00c8e0;transform:translateY(-1px);}
+.btn-danger{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;}
+.btn-meet{background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;}
+.btn-lg{padding:.8rem 1.8rem;font-size:.95rem;border-radius:12px;}
+.btn-sm{padding:.3rem .7rem;font-size:.75rem;border-radius:6px;}
+/* PAGES */
+.page{display:none;min-height:100vh;padding-top:64px;position:relative;z-index:1;}
+.page.active{display:block;}
+#page-home.active{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:64px 1.5rem 4rem;}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.35rem .9rem;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);border-radius:100px;font-size:.78rem;color:var(--accent);font-weight:500;margin-bottom:1.75rem;animation:fadeUp .6s ease both;}
+.hero-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,5vw,4rem);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:1.25rem;animation:fadeUp .6s ease .1s both;}
+.hero-title .hl{color:var(--accent);}
+.hero-sub{font-size:1rem;color:var(--muted);max-width:520px;line-height:1.7;margin-bottom:2rem;animation:fadeUp .6s ease .2s both;}
+.hero-ctas{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;animation:fadeUp .6s ease .3s both;}
+/* SECTION */
+.section{padding:1.5rem 2rem 5rem;}
+.section-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem;}
+.page-title{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;}
+.page-title span{color:var(--accent);}
+.filter-bar{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.cat-btn{padding:.45rem .9rem;border-radius:100px;font-size:.8rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
+.cat-btn:hover,.cat-btn.active{background:rgba(0,229,255,.1);border-color:var(--accent);color:var(--accent);}
+/* CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1rem;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;transition:all .25s;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0;transition:opacity .25s;}
+.card:hover{border-color:rgba(0,229,255,.3);transform:translateY(-2px);}
+.card:hover::before{opacity:1;}
+.avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#fff;margin-bottom:.9rem;}
+.card-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:.2rem;}
+.card-sub{font-size:.75rem;color:var(--accent);font-weight:500;margin-bottom:.5rem;}
+.card-desc{font-size:.8rem;color:var(--muted);line-height:1.5;margin-bottom:.9rem;min-height:2rem;}
+.card-actions{display:flex;gap:.4rem;flex-wrap:wrap;}
+/* RECURSOS */
+.rcard{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;transition:all .25s;}
+.rcard:hover{border-color:rgba(0,229,255,.3);transform:translateY(-2px);}
+.rcard-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.9rem;}
+.rcard-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
+.icon-pdf{background:rgba(239,68,68,.15);}
+.icon-ppt{background:rgba(245,158,11,.15);}
+.icon-doc{background:rgba(59,130,246,.15);}
+.rcard-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;margin-bottom:.2rem;}
+.rcard-meta{font-size:.75rem;color:var(--muted);margin-bottom:.5rem;}
+.rcat-badge{display:inline-block;padding:.18rem .55rem;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.2);border-radius:100px;font-size:.68rem;color:#a78bfa;margin-bottom:.75rem;}
+.rcard-foot{display:flex;align-items:center;justify-content:space-between;}
+.rcard-author{font-size:.75rem;color:var(--muted);}
+.dl-btn{padding:.3rem .75rem;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);border-radius:7px;color:var(--accent);font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;transition:all .2s;}
+.dl-btn:hover{background:rgba(0,229,255,.18);}
+/* CHAT */
+.chat-wrap{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 64px);}
+.chat-sidebar{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:.75rem;}
+.sidebar-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:.75rem;padding:0 .5rem;}
+.contact{display:flex;align-items:center;gap:.6rem;padding:.65rem .6rem;border-radius:9px;cursor:pointer;transition:background .2s;margin-bottom:.15rem;}
+.contact:hover,.contact.active{background:var(--surface2);}
+.contact-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.contact-name{font-weight:500;font-size:.83rem;}
+.contact-last{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chat-main{display:flex;flex-direction:column;overflow:hidden;}
+.chat-header{padding:.85rem 1.25rem;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.chat-hinfo{display:flex;align-items:center;gap:.6rem;}
+.chat-hname{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;}
+.chat-hsub{font-size:.72rem;color:var(--muted);}
+.msgs{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:.85rem;}
+.msg{display:flex;gap:.6rem;max-width:72%;animation:msgIn .2s ease;}
+.msg.mine{align-self:flex-end;flex-direction:row-reverse;}
+.msg-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;flex-shrink:0;}
+.msg.mine .msg-av{background:linear-gradient(135deg,#f59e0b,#f97316);}
+.bubble{padding:.65rem .9rem;border-radius:14px;font-size:.85rem;line-height:1.6;}
+.msg:not(.mine) .bubble{background:var(--surface2);border:1px solid var(--border);border-top-left-radius:3px;}
+.msg.mine .bubble{background:linear-gradient(135deg,rgba(0,229,255,.14),rgba(124,58,237,.14));border:1px solid rgba(0,229,255,.2);border-top-right-radius:3px;}
+.msg-time{font-size:.68rem;color:var(--muted);margin-top:.2rem;}
+.msg.mine .msg-time{text-align:right;}
+.chat-input-wrap{padding:.85rem 1.25rem;border-top:1px solid var(--border);background:var(--surface);display:flex;gap:.6rem;align-items:center;flex-shrink:0;}
+.chat-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.65rem .9rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.875rem;outline:none;resize:none;height:44px;transition:border-color .2s;}
+.chat-input:focus{border-color:var(--accent);}
+.send-btn{width:44px;height:44px;border-radius:10px;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .2s;flex-shrink:0;}
+.send-btn:hover{background:#00c8e0;}
+/* MODALS */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem;}
+.overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:1.75rem;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;animation:modalIn .25s ease;}
+.modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;margin-bottom:1.25rem;}
+.modal-title span{color:var(--accent);}
+.form-group{margin-bottom:1.1rem;}
+.form-label{display:block;font-size:.82rem;font-weight:500;margin-bottom:.4rem;color:var(--muted);}
+.form-input,.form-select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:.7rem .9rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.875rem;outline:none;transition:border-color .2s;}
+.form-input:focus,.form-select:focus{border-color:var(--accent);}
+.form-select option{background:var(--surface);}
+.modal-btns{display:flex;gap:.6rem;margin-top:1.25rem;}
+.modal-btns .btn{flex:1;}
+.err-box{display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:.65rem .9rem;font-size:.82rem;color:#f87171;margin-bottom:1rem;}
+.tabs{display:flex;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:1.25rem;}
+.tab{flex:1;padding:.65rem;text-align:center;cursor:pointer;font-size:.85rem;font-weight:500;background:transparent;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .2s;}
+.tab.active{background:rgba(0,229,255,.1);color:var(--accent);}
+/* MEET NOTIF */
+#meet-notif{position:fixed;top:76px;right:1.5rem;background:var(--surface);border:1px solid rgba(26,115,232,.4);border-radius:14px;padding:1rem 1.25rem;z-index:400;display:none;max-width:300px;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.meet-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;margin-bottom:.4rem;}
+.meet-link-text{font-size:.78rem;color:var(--accent);word-break:break-all;display:block;margin-bottom:.75rem;}
+/* TOAST */
+#toast{position:fixed;bottom:4.5rem;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid rgba(0,229,255,.3);border-radius:10px;padding:.75rem 1.25rem;font-size:.85rem;font-weight:500;z-index:500;display:none;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+/* LOADING */
+.loading{text-align:center;padding:3rem;color:var(--muted);grid-column:1/-1;}
+.spinner{display:inline-block;width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:.75rem;}
+/* EMPTY */
+.empty{text-align:center;padding:3rem 1rem;color:var(--muted);grid-column:1/-1;}
+.empty-icon{font-size:2.5rem;margin-bottom:.75rem;opacity:.5;}
+/* MEET BADGE */
+.meet-badge{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .6rem;background:rgba(26,115,232,.15);border:1px solid rgba(26,115,232,.3);border-radius:100px;font-size:.72rem;color:#60a5fa;}
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+/* RESPONSIVE */
+@media(max-width:768px){
+  .nav-links,.nav-right{display:none;}
+  .hamburger{display:flex;}
+  nav{padding:0 1rem;}
+  .bnav{display:block;}
+  #page-home.active{padding:64px 1rem 5rem;}
+  .hero-title{font-size:1.9rem;letter-spacing:-1px;}
+  .hero-ctas{flex-direction:column;width:100%;}
+  .hero-ctas .btn-lg{width:100%;text-align:center;}
+  .section{padding:1rem 1rem 5rem;}
+  .grid{grid-template-columns:1fr;}
+  .filter-bar{flex-wrap:nowrap;overflow-x:auto;padding-bottom:.4rem;}
+  .filter-bar::-webkit-scrollbar{display:none;}
+  .chat-wrap{grid-template-columns:1fr;height:calc(100vh - 64px - 56px);}
+  .chat-sidebar{display:none;}
+  .msgs{padding:.85rem;}
+  .msg{max-width:88%;}
+  #meet-notif{left:1rem;right:1rem;}
+  .modal{padding:1.25rem;}
+  .section-top{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Profe<span>Libre</span>UNI</div>
+  <ul class="nav-links">
+    <li><a id="nl-home" class="active" onclick="goTo('home')">Inicio</a></li>
+    <li><a id="nl-tutores" onclick="goTo('tutores')">Tutores</a></li>
+    <li><a id="nl-chat" onclick="goTo('chat')">Chat</a></li>
+    <li><a id="nl-recursos" onclick="goTo('recursos')">Recursos</a></li>
+  </ul>
+  <div class="nav-right" id="nav-right"></div>
+  <button class="hamburger" id="hamburger" onclick="toggleDrawer()"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="drawer" id="drawer">
+  <a id="dl-home" class="active" onclick="goTo('home');toggleDrawer()">🏠 Inicio</a>
+  <a id="dl-tutores" onclick="goTo('tutores');toggleDrawer()">👨‍🏫 Tutores</a>
+  <a id="dl-chat" onclick="goTo('chat');toggleDrawer()">💬 Chat</a>
+  <a id="dl-recursos" onclick="goTo('recursos');toggleDrawer()">📚 Recursos</a>
+  <div class="drawer-btns" id="drawer-btns"></div>
+</div>
+
+<div class="bnav">
+  <div class="bnav-items">
+    <button class="bnav-item active" id="bn-home" onclick="goTo('home')"><span class="bnav-icon">🏠</span>Inicio</button>
+    <button class="bnav-item" id="bn-tutores" onclick="goTo('tutores')"><span class="bnav-icon">👨‍🏫</span>Tutores</button>
+    <button class="bnav-item" id="bn-chat" onclick="goTo('chat')"><span class="bnav-icon">💬</span>Chat</button>
+    <button class="bnav-item" id="bn-recursos" onclick="goTo('recursos')"><span class="bnav-icon">📚</span>Recursos</button>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="hero-badge">🎓 Plataforma gratuita UNI × Colegios del Perú</div>
+  <h1 class="hero-title">Aprende sin límites<br><span class="hl">con tutores de la UNI</span></h1>
+  <p class="hero-sub">Conectamos estudiantes de la FIIS-UNI con escolares de todo el Perú. Tutorías gratuitas, recursos educativos y reuniones por Google Meet.</p>
+  <div class="hero-ctas">
+    <button class="btn btn-primary btn-lg" onclick="goTo('tutores')">Ver tutores disponibles →</button>
+    <button class="btn btn-ghost btn-lg" onclick="openModal('modal-register')">Registrarme</button>
+  </div>
+</div>
+
+<!-- TUTORES -->
+<div id="page-tutores" class="page">
+  <div class="section">
+    <div class="section-top">
+      <h2 class="page-title">Nuestros <span>Tutores</span></h2>
+      <button class="btn btn-primary" id="btn-ser-tutor">+ Ser tutor</button>
+    </div>
+    <div class="filter-bar" id="tutor-filters">
+      <button class="cat-btn active" onclick="filtrarTutores(this,'all')">Todos</button>
+      <button class="cat-btn" onclick="filtrarTutores(this,'matematica')">📐 Matemática</button>
+      <button class="cat-btn" onclick="filtrarTutores(this,'ciencias')">🔬 Ciencias</button>
+      <button class="cat-btn" onclick="filtrarTutores(this,'letras')">📖 Letras</button>
+      <button class="cat-btn" onclick="filtrarTutores(this,'fisica')">⚡ Física</button>
+      <button class="cat-btn" onclick="filtrarTutores(this,'quimica')">🧪 Química</button>
+    </div>
+    <div class="grid" id="tutores-grid"><div class="loading"><div class="spinner"></div><p>Cargando tutores...</p></div></div>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div id="page-chat" class="page">
+  <div class="chat-wrap">
+    <div class="chat-sidebar">
+      <div class="sidebar-title">Mis chats</div>
+      <div id="contacts"></div>
+    </div>
+    <div class="chat-main">
+      <div class="chat-header">
+        <div class="chat-hinfo">
+          <div class="contact-av" id="chat-av">?</div>
+          <div>
+            <div class="chat-hname" id="chat-name">Selecciona un tutor</div>
+            <div class="chat-hsub">🔒 Chat privado</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span id="meet-badge-area"></span>
+          <button class="btn btn-meet btn-sm" id="meet-btn">🎥 Meet</button>
+        </div>
+      </div>
+      <div class="msgs" id="msgs"><div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">Selecciona un tutor para chatear 👋</div></div>
+      <div class="chat-input-wrap">
+        <textarea class="chat-input" id="chat-input" placeholder="Escribe tu mensaje..." onkeydown="chatEnter(event)"></textarea>
+        <button class="send-btn" onclick="enviarMsg()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RECURSOS -->
+<div id="page-recursos" class="page">
+  <div class="section">
+    <div class="section-top">
+      <h2 class="page-title">Recursos <span>Educativos</span></h2>
+      <span id="rec-add-btn"></span>
+    </div>
+    <div style="background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.12);border-radius:10px;padding:.75rem 1rem;font-size:.82rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.6">
+      📌 Los tutores pueden subir y eliminar recursos. Los escolares los pueden ver y abrir.
+    </div>
+    <div class="filter-bar" id="rec-filters">
+      <button class="cat-btn active" onclick="filtrarRecursos(this,'matematica')">📐 Matemática</button>
+      <button class="cat-btn" onclick="filtrarRecursos(this,'ciencias')">🔬 Ciencias</button>
+      <button class="cat-btn" onclick="filtrarRecursos(this,'letras')">📖 Letras</button>
+      <button class="cat-btn" onclick="filtrarRecursos(this,'fisica')">⚡ Física</button>
+      <button class="cat-btn" onclick="filtrarRecursos(this,'quimica')">🧪 Química</button>
+    </div>
+    <div class="grid" id="recursos-grid"><div class="loading"><div class="spinner"></div><p>Cargando recursos...</p></div></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- MEET NOTIF -->
+<div id="meet-notif">
+  <div class="meet-title">🎥 Link de Google Meet generado</div>
+  <a id="meet-link" class="meet-link-text" href="#" target="_blank"></a>
+  <p style="font-size:.75rem;color:var(--muted);margin-bottom:.75rem">Comparte este link con el tutor/estudiante para iniciar la reunión.</p>
+  <button class="btn btn-primary btn-sm" onclick="document.getElementById('meet-notif').style.display='none'">Cerrar</button>
+</div>
+
+<!-- MODAL LOGIN -->
+<div class="overlay" id="modal-login" onclick="overlayClick(event,'modal-login')">
+  <div class="modal">
+    <div class="modal-title">Iniciar <span>Sesión</span></div>
+    <div class="err-box" id="login-err"></div>
+    <div class="form-group"><label class="form-label">Correo</label><input class="form-input" id="login-email" type="email" placeholder="tu@correo.com"></div>
+    <div class="form-group"><label class="form-label">Contraseña</label><input class="form-input" id="login-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeModal('modal-login')">Cancelar</button>
+      <button class="btn btn-primary" onclick="doLogin()">Ingresar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL REGISTER -->
+<div class="overlay" id="modal-register" onclick="overlayClick(event,'modal-register')">
+  <div class="modal">
+    <div class="modal-title">Crear <span>Cuenta</span></div>
+    <div class="tabs">
+      <button class="tab active" id="tab-tutor" onclick="setTab('tutor')">🎓 Tutor UNI</button>
+      <button class="tab" id="tab-escolar" onclick="setTab('escolar')">📚 Escolar</button>
+    </div>
+    <div id="fields-tutor">
+      <div class="form-group"><label class="form-label">Nombre completo</label><input class="form-input" id="reg-nombre-tutor" placeholder="Tu nombre completo"></div>
+      <div class="form-group"><label class="form-label">Código UNI</label><input class="form-input" id="reg-codigo" placeholder="20XXXXXXX"></div>
+      <div class="form-group"><label class="form-label">Especialidad</label>
+        <select class="form-select" id="reg-especialidad">
+          <option value="matematica">📐 Matemática</option>
+          <option value="fisica">⚡ Física</option>
+          <option value="quimica">🧪 Química</option>
+          <option value="letras">📖 Letras</option>
+          <option value="ciencias">🔬 Ciencias</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Descripción <span style="color:var(--muted);font-weight:400">— opcional</span></label><input class="form-input" id="reg-descripcion" placeholder="Ej: Ayudo con álgebra desde nivel básico"></div>
+    </div>
+    <div id="fields-escolar" style="display:none">
+      <div class="form-group"><label class="form-label">Nombre completo</label><input class="form-input" id="reg-nombre-escolar" placeholder="Tu nombre completo"></div>
+      <div class="form-group"><label class="form-label">Colegio</label><input class="form-input" id="reg-colegio" placeholder="Nombre de tu colegio"></div>
+    </div>
+    <div class="err-box" id="reg-err"></div>
+    <div class="form-group"><label class="form-label">Correo</label><input class="form-input" id="reg-email" type="email" placeholder="tu@correo.com"></div>
+    <div class="form-group"><label class="form-label">Contraseña (mínimo 6 caracteres)</label><input class="form-input" id="reg-pass" type="password" placeholder="••••••••"></div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeModal('modal-register')">Cancelar</button>
+      <button class="btn btn-primary" onclick="doRegister()">Registrarme</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SUBIR RECURSO -->
+<div class="overlay" id="modal-subir" onclick="overlayClick(event,'modal-subir')">
+  <div class="modal">
+    <div class="modal-title" id="subir-title">Subir <span>Recurso</span></div>
+    <div class="form-group"><label class="form-label">Título</label><input class="form-input" id="rec-titulo" placeholder="Ej: Álgebra Lineal - Matrices"></div>
+    <div class="form-group"><label class="form-label">Categoría</label>
+      <select class="form-select" id="rec-cat">
+        <option value="matematica">📐 Matemática</option>
+        <option value="ciencias">🔬 Ciencias</option>
+        <option value="letras">📖 Letras</option>
+        <option value="fisica">⚡ Física</option>
+        <option value="quimica">🧪 Química</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Tipo</label>
+      <select class="form-select" id="rec-tipo">
+        <option value="pdf">📄 PDF</option>
+        <option value="ppt">📊 PowerPoint</option>
+        <option value="doc">📝 Word</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Link de Google Drive / OneDrive</label>
+      <input class="form-input" id="rec-link" type="url" placeholder="https://drive.google.com/file/...">
+      <p style="font-size:.75rem;color:var(--muted);margin-top:.35rem">Sube tu archivo a Google Drive y pega el link aquí para que todos puedan acceder.</p>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeModal('modal-subir')">Cancelar</button>
+      <button class="btn btn-primary" id="subir-btn" onclick="guardarRecurso()">Subir recurso</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PERFIL -->
+<div class="overlay" id="modal-perfil" onclick="overlayClick(event,'modal-perfil')">
+  <div class="modal">
+    <div class="modal-title">Mi <span>Perfil</span></div>
+    <div id="perfil-body"></div>
+    <div id="perfil-extras"></div>
+    <div class="modal-btns" style="margin-top:1.25rem">
+      <button class="btn btn-ghost" onclick="closeModal('modal-perfil')">Cerrar</button>
+      <button class="btn btn-danger" onclick="doLogout()">Cerrar sesión</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HACERSE TUTOR -->
+<div class="overlay" id="modal-hacerse-tutor" onclick="overlayClick(event,'modal-hacerse-tutor')">
+  <div class="modal">
+    <div class="modal-title">Ser <span>Tutor</span></div>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.25rem">Completa estos datos para aparecer como tutor para todos.</p>
+    <div class="err-box" id="ht-err"></div>
+    <div class="form-group"><label class="form-label">Código UNI</label><input class="form-input" id="ht-codigo" placeholder="20XXXXXXX"></div>
+    <div class="form-group"><label class="form-label">Especialidad</label>
+      <select class="form-select" id="ht-esp">
+        <option value="matematica">📐 Matemática</option>
+        <option value="fisica">⚡ Física</option>
+        <option value="quimica">🧪 Química</option>
+        <option value="letras">📖 Letras</option>
+        <option value="ciencias">🔬 Ciencias</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Descripción <span style="color:var(--muted);font-weight:400">— opcional</span></label><input class="form-input" id="ht-desc" placeholder="Ej: Ayudo con cálculo y algebra"></div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeModal('modal-hacerse-tutor')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarRolTutor()">Convertirme en tutor</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// PROFELIBUNI - Sistema completo con Google Apps Script
+// Todos los usuarios comparten la misma base de datos en tiempo real
+// ════════════════════════════════════════════════════════════════
+
+// URL del Google Apps Script (backend gratuito en Google)
+// INSTRUCCIÓN: Reemplaza esta URL con la tuya (ver README al final)
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbzqI8PZ3n9QgYYg7XZWsndErYgnvQo-HhbESeb-aTHH8I48cRnWFcpNixoxECBx4cIlLw/exec';
+
+var CAT_LABEL  = {matematica:'Matemática',ciencias:'Ciencias',letras:'Letras',fisica:'Física',quimica:'Química'};
+var ICON_MAP   = {pdf:'📄',ppt:'📊',doc:'📝'};
+var ICON_CLASS = {pdf:'icon-pdf',ppt:'icon-ppt',doc:'icon-doc'};
+
+// ── SESIÓN LOCAL ─────────────────────────────────────────────────
+function getMe()   { try{return JSON.parse(localStorage.getItem('pluni_me')||'null');}catch(e){return null;} }
+function saveMe(u) { localStorage.setItem('pluni_me', u ? JSON.stringify(u) : 'null'); }
+function getIni(n) { return (n||'?').split(' ').map(function(w){return w[0]||'';}).join('').substr(0,2).toUpperCase(); }
+
+// ── API HELPER ───────────────────────────────────────────────────
+// Google Apps Script requiere peticiones GET con parámetros en URL
+// Para POST usamos un iframe oculto + fallback local
+async function api(action, data) {
+  if(!GAS_URL) return apiLocal(action, data);
+  try {
+    var params = 'action=' + encodeURIComponent(action);
+    if(data) params += '&data=' + encodeURIComponent(JSON.stringify(data));
+    var url = GAS_URL + '?' + params;
+    var res  = await fetch(url, {redirect:'follow'});
+    var text = await res.text();
+    return JSON.parse(text);
+  } catch(e) {
+    console.error('API error:', e);
+    return apiLocal(action, data);
+  }
+}
+
+// JSONP: injects a script tag to bypass CORS
+function fetchJSONP(url) {
+  return new Promise(function(resolve) {
+    var cbName = 'cb_' + Date.now() + '_' + Math.floor(Math.random()*9999);
+    var fullUrl = url + (url.indexOf('?')>=0?'&':'?') + 'callback=' + cbName;
+    var script  = document.createElement('script');
+    var timeout = setTimeout(function(){
+      delete window[cbName];
+      if(script.parentNode) script.parentNode.removeChild(script);
+      resolve(null);
+    }, 8000);
+    window[cbName] = function(data){
+      clearTimeout(timeout);
+      delete window[cbName];
+      if(script.parentNode) script.parentNode.removeChild(script);
+      resolve(data);
+    };
+    script.src = fullUrl;
+    script.onerror = function(){
+      clearTimeout(timeout);
+      delete window[cbName];
+      resolve(null);
+    };
+    document.head.appendChild(script);
+  });
+}
+
+// ── FALLBACK LOCAL (cuando no hay GAS_URL) ───────────────────────
+function getLocalDB() { try{return JSON.parse(localStorage.getItem('pluni_db')||'{"users":[],"recursos":[],"chats":{}}')}catch(e){return {users:[],recursos:[],chats:{}};} }
+function saveLocalDB(db){ localStorage.setItem('pluni_db', JSON.stringify(db)); }
+
+var REC_DEFAULT = [
+  {id:'r1',titulo:'Guía de Matrices y Determinantes',tipo:'pdf',cat:'matematica',autor:'Sistema',fecha:'inicio',link:''},
+  {id:'r2',titulo:'Física Ondulatoria - Introducción',tipo:'ppt',cat:'fisica',autor:'Sistema',fecha:'inicio',link:''},
+  {id:'r3',titulo:'Tabla Periódica Interactiva',tipo:'pdf',cat:'quimica',autor:'Sistema',fecha:'inicio',link:''},
+  {id:'r4',titulo:'Técnicas de Redacción Académica',tipo:'doc',cat:'letras',autor:'Sistema',fecha:'inicio',link:''},
+  {id:'r5',titulo:'Biología Celular - Resumen',tipo:'ppt',cat:'ciencias',autor:'Sistema',fecha:'inicio',link:''}
+];
+
+function apiLocal(action, data) {
+  var db = getLocalDB();
+  if(!db.recursos || !db.recursos.length) db.recursos = REC_DEFAULT;
+
+  if(action==='getUsers')   return {ok:true, data: db.users};
+  if(action==='getTutores') return {ok:true, data: db.users.filter(function(u){return u.rol==='tutor';})};
+  if(action==='getRecursos')return {ok:true, data: db.recursos.filter(function(r){return r.cat===data.cat;})};
+
+  if(action==='register'){
+    var exists = db.users.find(function(u){return u.email===data.email;});
+    if(exists) return {ok:false, error:'Ya existe una cuenta con ese correo.'};
+    db.users.push(data); saveLocalDB(db);
+    return {ok:true, data:data};
+  }
+  if(action==='login'){
+    var u = db.users.find(function(u){return u.email===data.email && u.pass===data.pass;});
+    if(!u) return {ok:false, error:'Correo o contraseña incorrectos.'};
+    return {ok:true, data:u};
+  }
+  if(action==='updateUser'){
+    db.users = db.users.map(function(u){return u.email===data.email ? data : u;});
+    saveLocalDB(db); return {ok:true};
+  }
+  if(action==='addRecurso'){
+    data.id = 'r'+Date.now(); db.recursos.unshift(data); saveLocalDB(db);
+    return {ok:true, data:data};
+  }
+  if(action==='deleteRecurso'){
+    db.recursos = db.recursos.filter(function(r){return r.id!==data.id;});
+    saveLocalDB(db); return {ok:true};
+  }
+  if(action==='getMsgs'){
+    var key = [data.a, data.b].sort().join('__');
+    return {ok:true, data: db.chats[key]||[]};
+  }
+  if(action==='sendMsg'){
+    var key = [data.from, data.to].sort().join('__');
+    if(!db.chats[key]) db.chats[key]=[];
+    db.chats[key].push({from:data.from,fromNombre:data.fromNombre,texto:data.texto,hora:data.hora});
+    saveLocalDB(db); return {ok:true};
+  }
+  return {ok:false, error:'Unknown action'};
+}
+
+// ── TOAST ────────────────────────────────────────────────────────
+function toast(msg, red){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.style.borderColor=red?'rgba(239,68,68,.4)':'rgba(0,229,255,.3)';
+  t.style.display='block'; clearTimeout(t._t);
+  t._t=setTimeout(function(){t.style.display='none';},3500);
+}
+function showErr(id,msg){ var e=document.getElementById(id);e.textContent=msg;e.style.display='block'; }
+function hideErr(id){ document.getElementById(id).style.display='none'; }
+
+// ── NAVEGACIÓN ───────────────────────────────────────────────────
+var currentPage='home', activeChatEmail=null, chatTimer=null, tutorFiltro='all', recFiltro='matematica';
+var PAGES=['home','tutores','chat','recursos'];
+
+function goTo(page){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  PAGES.forEach(function(p){
+    ['nl','dl','bn'].forEach(function(pfx){var el=document.getElementById(pfx+'-'+p);if(el)el.classList.remove('active');});
+  });
+  currentPage=page;
+  var pg=document.getElementById('page-'+page); if(pg) pg.classList.add('active');
+  ['nl','dl','bn'].forEach(function(pfx){var el=document.getElementById(pfx+'-'+page);if(el)el.classList.add('active');});
+  clearInterval(chatTimer);
+  if(page==='tutores') renderTutores();
+  if(page==='recursos'){ renderRecursos(null); }
+  if(page==='chat'){ renderContacts(); chatTimer=setInterval(function(){if(activeChatEmail) renderMsgs();},5000); }
+}
+
+function toggleDrawer(){
+  document.getElementById('drawer').classList.toggle('open');
+  document.getElementById('hamburger').classList.toggle('open');
+}
+
+// ── MODALS ───────────────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function overlayClick(e,id){if(e.target===e.currentTarget)closeModal(id);}
+
+// ── AUTH ─────────────────────────────────────────────────────────
+var regRole='tutor';
+function setTab(role){
+  regRole=role;
+  document.getElementById('tab-tutor').classList.toggle('active',role==='tutor');
+  document.getElementById('tab-escolar').classList.toggle('active',role==='escolar');
+  document.getElementById('fields-tutor').style.display  =role==='tutor'   ?'block':'none';
+  document.getElementById('fields-escolar').style.display=role==='escolar' ?'block':'none';
+}
+
+async function doLogin(){
+  hideErr('login-err');
+  var email=document.getElementById('login-email').value.trim();
+  var pass =document.getElementById('login-pass').value;
+  if(!email||!pass){showErr('login-err','Completa todos los campos.');return;}
+  var res = await api('login',{email:email,pass:pass});
+  if(!res.ok){showErr('login-err',res.error||'Error al iniciar sesión.');return;}
+  saveMe(res.data); closeModal('modal-login');
+  document.getElementById('login-email').value='';
+  document.getElementById('login-pass').value='';
+  updateNav(); renderTutores(); renderRecursos(null);
+  toast('¡Bienvenido, '+res.data.nombre+'!');
+}
+
+async function doRegister(){
+  hideErr('reg-err');
+  var nombre=regRole==='tutor'?document.getElementById('reg-nombre-tutor').value.trim():document.getElementById('reg-nombre-escolar').value.trim();
+  var email=document.getElementById('reg-email').value.trim();
+  var pass =document.getElementById('reg-pass').value;
+  if(!nombre||!email||!pass){showErr('reg-err','Completa todos los campos.');return;}
+  if(pass.length<6){showErr('reg-err','Contraseña mínimo 6 caracteres.');return;}
+  var user={nombre:nombre,email:email,pass:pass,rol:regRole};
+  if(regRole==='tutor'){
+    user.especialidad=document.getElementById('reg-especialidad').value;
+    var desc=document.getElementById('reg-descripcion').value.trim();
+    if(desc) user.descripcion=desc;
+  } else {
+    user.colegio=document.getElementById('reg-colegio').value.trim();
+  }
+  var res=await api('register',user);
+  if(!res.ok){showErr('reg-err',res.error||'Error al registrarse.');return;}
+  saveMe(res.data); closeModal('modal-register');
+  updateNav(); renderTutores(); renderRecursos(null);
+  toast('¡Cuenta creada! Bienvenido, '+nombre+'!');
+}
+
+function doLogout(){
+  saveMe(null); activeChatEmail=null; clearInterval(chatTimer);
+  closeModal('modal-perfil'); updateNav(); renderTutores(); renderRecursos(null); renderContacts();
+  toast('Sesión cerrada.');
+}
+
+function updateNav(){
+  var user=getMe();
+  var nr=document.getElementById('nav-right');
+  var db=document.getElementById('drawer-btns');
+  var bt=document.getElementById('btn-ser-tutor');
+  var ra=document.getElementById('rec-add-btn');
+  nr.innerHTML=''; db.innerHTML='';
+
+  if(user){
+    var ini=getIni(user.nombre);
+    // Nav right: profile button
+    var pb=document.createElement('div');
+    pb.style.cssText='display:flex;align-items:center;gap:.5rem;cursor:pointer;padding:.4rem .85rem;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);border-radius:8px;';
+    pb.innerHTML='<div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#00e5ff);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;">'+ini+'</div>'+
+      '<span style="font-size:.85rem;font-weight:500;">'+user.nombre.split(' ')[0]+'</span>';
+    pb.onclick=verPerfil; nr.appendChild(pb);
+    // Drawer
+    var d1=mk('button','btn btn-ghost','Mi perfil',function(){verPerfil();toggleDrawer();}); db.appendChild(d1);
+    var d2=mk('button','btn btn-danger','Cerrar sesión',doLogout); db.appendChild(d2);
+    // Ser tutor button
+    if(bt){ if(user.rol!=='tutor'){bt.textContent='+ Ser tutor';bt.onclick=function(){closeModal('modal-perfil');openModal('modal-hacerse-tutor');};}else{bt.textContent='Mi perfil';bt.onclick=verPerfil;} }
+    // Recursos: solo tutores pueden subir/eliminar
+    if(ra){ ra.innerHTML=''; if(user.rol==='tutor'){var rb=mk('button','btn btn-primary','+ Subir recurso',abrirSubir);ra.appendChild(rb);} }
+  } else {
+    var g1=mk('button','btn btn-ghost','Iniciar sesión',function(){openModal('modal-login');}); nr.appendChild(g1);
+    var g2=mk('button','btn btn-primary','Registrarse',function(){openModal('modal-register');}); nr.appendChild(g2);
+    var d3=mk('button','btn btn-ghost','Iniciar sesión',function(){openModal('modal-login');toggleDrawer();}); db.appendChild(d3);
+    var d4=mk('button','btn btn-primary','Registrarse',function(){openModal('modal-register');toggleDrawer();}); db.appendChild(d4);
+    if(bt){bt.textContent='+ Ser tutor';bt.onclick=function(){openModal('modal-register');};}
+    if(ra){ra.innerHTML='';}
+  }
+}
+
+function mk(tag,cls,txt,fn){
+  var el=document.createElement(tag); el.className=cls; el.textContent=txt; if(fn) el.onclick=fn; return el;
+}
+
+function verPerfil(){
+  var user=getMe(); if(!user) return;
+  var ini=getIni(user.nombre), esTutor=user.rol==='tutor';
+  document.getElementById('perfil-body').innerHTML=
+    '<div style="text-align:center">'+
+    '<div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#00e5ff);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;margin:0 auto .9rem">'+ini+'</div>'+
+    '<div style="font-family:Syne,sans-serif;font-size:1.1rem;font-weight:800">'+user.nombre+'</div>'+
+    '<div style="font-size:.8rem;color:var(--accent);margin:.25rem 0">'+(esTutor?'🎓 Tutor FIIS-UNI':'📚 Escolar')+'</div>'+
+    '<div style="font-size:.78rem;color:var(--muted)">'+user.email+'</div>'+
+    (esTutor&&user.especialidad?'<div style="font-size:.78rem;color:var(--muted);margin-top:.2rem">'+CAT_LABEL[user.especialidad]+'</div>':'')+
+    (esTutor&&user.descripcion?'<div style="font-size:.78rem;color:var(--muted);font-style:italic;margin-top:.2rem">'+user.descripcion+'</div>':'')+
+    (user.colegio?'<div style="font-size:.78rem;color:var(--muted);margin-top:.2rem">'+user.colegio+'</div>':'')+
+    '</div>';
+  var ext=document.getElementById('perfil-extras'); ext.innerHTML='';
+  if(!esTutor){
+    var btn=mk('button','btn btn-primary','🎓 Convertirme en tutor',function(){closeModal('modal-perfil');openModal('modal-hacerse-tutor');});
+    btn.style.cssText='width:100%;margin-top:.75rem'; ext.appendChild(btn);
+  } else {
+    var btn2=mk('button','btn btn-ghost','Dejar de ser tutor',quitarTutor);
+    btn2.style.cssText='width:100%;margin-top:.75rem;font-size:.8rem'; ext.appendChild(btn2);
+  }
+  openModal('modal-perfil');
+}
+
+async function guardarRolTutor(){
+  var codigo=document.getElementById('ht-codigo').value.trim();
+  var errEl=document.getElementById('ht-err'); errEl.style.display='none';
+  if(!codigo){errEl.textContent='Ingresa tu código UNI.';errEl.style.display='block';return;}
+  var me=getMe(); if(!me) return;
+  me.rol='tutor'; me.especialidad=document.getElementById('ht-esp').value;
+  var desc=document.getElementById('ht-desc').value.trim(); if(desc) me.descripcion=desc;
+  var res=await api('updateUser',me);
+  if(!res.ok){toast('Error al actualizar.',true);return;}
+  saveMe(me); closeModal('modal-hacerse-tutor');
+  updateNav(); renderTutores(); renderContacts();
+  toast('🎓 ¡Ahora eres tutor! Ya te ven todos los usuarios.');
+}
+
+async function quitarTutor(){
+  if(!confirm('¿Dejar de ser tutor? Dejarás de aparecer en la lista.')) return;
+  var me=getMe(); if(!me) return;
+  me.rol='escolar'; delete me.especialidad; delete me.descripcion;
+  var res=await api('updateUser',me);
+  if(!res.ok){toast('Error al actualizar.',true);return;}
+  saveMe(me); closeModal('modal-perfil'); updateNav(); renderTutores();
+  toast('Has dejado de ser tutor.');
+}
+
+// ── TUTORES ──────────────────────────────────────────────────────
+function filtrarTutores(btn,cat){
+  tutorFiltro=cat;
+  document.querySelectorAll('#tutor-filters .cat-btn').forEach(function(b){b.classList.remove('active');}); btn.classList.add('active'); renderTutores();
+}
+
+async function renderTutores(){
+  var grid=document.getElementById('tutores-grid');
+  grid.innerHTML='<div class="loading"><div class="spinner"></div><p>Cargando tutores...</p></div>';
+  var res=await api('getTutores',{});
+  if(!res.ok||!res.data){grid.innerHTML='<div class="empty"><div class="empty-icon">❌</div><p>Error al cargar tutores.</p></div>';return;}
+  var all=res.data;
+  var list=tutorFiltro==='all'?all:all.filter(function(t){return t.especialidad===tutorFiltro;});
+  var me=getMe();
+  if(all.length===0){grid.innerHTML='<div class="empty"><div class="empty-icon">👨‍🏫</div><p style="font-weight:600;margin-bottom:.4rem">Aún no hay tutores</p><p style="font-size:.83rem">¡Regístrate como tutor UNI!</p></div>';return;}
+  if(list.length===0){grid.innerHTML='<div class="empty"><div class="empty-icon">🔍</div><p>No hay tutores en esta categoría.</p></div>';return;}
+  grid.innerHTML='';
+  list.forEach(function(t){
+    var card=document.createElement('div'); card.className='card';
+    var ini=getIni(t.nombre), esp=CAT_LABEL[t.especialidad]||'';
+    card.innerHTML=
+      '<div class="avatar">'+ini+'</div>'+
+      '<div class="card-name">'+t.nombre+'</div>'+
+      '<div class="card-sub">FIIS-UNI'+(esp?' · '+esp:'')+'</div>'+
+      '<div class="card-desc">'+(t.descripcion||'')+'</div>'+
+      '<div class="card-actions"></div>';
+    var actions=card.querySelector('.card-actions');
+    // Chat button: escolar o tutor diferente puede chatear
+    if(me && me.email!==t.email){
+      var cb=mk('button','btn btn-primary btn-sm','💬 Chat',function(){abrirChatCon(t.email,t.nombre);});
+      actions.appendChild(cb);
+    } else if(!me){
+      var lb=mk('button','btn btn-ghost btn-sm','💬 Iniciar sesión',function(){openModal('modal-login');});
+      actions.appendChild(lb);
+    }
+    // Meet button: siempre visible
+    var mb=mk('button','btn btn-meet btn-sm','🎥 Meet',function(){generarMeetCon(t.nombre);});
+    actions.appendChild(mb);
+    grid.appendChild(card);
+  });
+}
+
+// ── MEET ─────────────────────────────────────────────────────────
+function generarMeet(){
+  var nombre=document.getElementById('chat-name').textContent;
+  generarMeetCon(nombre);
+}
+
+function generarMeetCon(nombre){
+  var c='abcdefghijkmnopqrstuvwxyz';
+  function s(n){var r='';for(var i=0;i<n;i++)r+=c[Math.floor(Math.random()*c.length)];return r;}
+  var link='https://meet.google.com/'+s(3)+'-'+s(4)+'-'+s(3);
+  document.getElementById('meet-link').textContent=link;
+  document.getElementById('meet-link').href=link;
+  document.getElementById('meet-notif').style.display='block';
+  // Show in chat as message if in chat with someone
+  var me=getMe();
+  if(me && activeChatEmail){
+    var hora=new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+    var txt='🎥 Link de Meet para nuestra sesión: '+link;
+    api('sendMsg',{from:me.email,to:activeChatEmail,fromNombre:me.nombre,texto:txt,hora:hora}).then(renderMsgs);
+  }
+  setTimeout(function(){document.getElementById('meet-notif').style.display='none';},20000);
+}
+
+document.getElementById('meet-btn').onclick=generarMeet;
+
+// ── CHAT ─────────────────────────────────────────────────────────
+function abrirChatCon(email,nombre){
+  var me=getMe();
+  if(!me){toast('Inicia sesión para chatear.',true);openModal('modal-login');return;}
+  activeChatEmail=email; goTo('chat');
+  setTimeout(function(){
+    document.querySelectorAll('.contact').forEach(function(c){c.classList.toggle('active',c.dataset.email===email);});
+    document.getElementById('chat-name').textContent=nombre;
+    document.getElementById('chat-av').textContent=getIni(nombre);
+    renderMsgs();
+  },100);
+}
+
+async function renderContacts(){
+  var el=document.getElementById('contacts'), me=getMe();
+  if(!me){
+    el.innerHTML='<div style="padding:1rem;font-size:.83rem;color:var(--muted);text-align:center">Inicia sesión para chatear.</div>';
+    document.getElementById('msgs').innerHTML='<div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">🔒 Inicia sesión para chatear.</div>';
+    return;
+  }
+  var res=await api('getTutores',{});
+  var tutores=(res.ok&&res.data)?res.data:[];
+  var contacts=tutores.filter(function(t){return t.email!==me.email;});
+  // Si soy tutor, agregar también escolares que me escribieron
+  if(me.rol==='tutor'){
+    var allRes=await api('getUsers',{});
+    if(allRes.ok&&allRes.data){
+      allRes.data.forEach(function(u){
+        if(u.rol!=='tutor'&&u.email!==me.email){
+          var found=contacts.find(function(c){return c.email===u.email;});
+          if(!found) contacts.push(u);
+        }
+      });
+    }
+  }
+  if(!contacts.length){
+    el.innerHTML='<div style="padding:1rem;font-size:.83rem;color:var(--muted);text-align:center">No hay tutores disponibles.</div>';
+    return;
+  }
+  if(!activeChatEmail) activeChatEmail=contacts[0].email;
+  el.innerHTML='';
+  contacts.forEach(function(t){
+    var ini=getIni(t.nombre);
+    var div=document.createElement('div'); div.className='contact'+(t.email===activeChatEmail?' active':'');
+    div.dataset.email=t.email;
+    div.innerHTML='<div class="contact-av">'+ini+'</div>'+
+      '<div style="flex:1;min-width:0"><div class="contact-name">'+t.nombre+'</div>'+
+      '<div class="contact-last">'+(CAT_LABEL[t.especialidad]||t.colegio||'Usuario')+'</div></div>';
+    div.onclick=function(){
+      document.querySelectorAll('.contact').forEach(function(c){c.classList.remove('active');});
+      div.classList.add('active'); activeChatEmail=t.email;
+      document.getElementById('chat-name').textContent=t.nombre;
+      document.getElementById('chat-av').textContent=ini;
+      renderMsgs();
+    };
+    el.appendChild(div);
+  });
+  var active=contacts.find(function(t){return t.email===activeChatEmail;});
+  if(active){document.getElementById('chat-name').textContent=active.nombre;document.getElementById('chat-av').textContent=getIni(active.nombre);}
+  renderMsgs();
+}
+
+async function renderMsgs(){
+  var el=document.getElementById('msgs'), me=getMe();
+  if(!me||!activeChatEmail){
+    el.innerHTML='<div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">Selecciona un contacto.</div>';
+    return;
+  }
+  var res=await api('getMsgs',{a:me.email,b:activeChatEmail});
+  var msgs=res.ok?res.data:[];
+  if(!msgs.length){
+    el.innerHTML='<div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">Inicia la conversación 👋<br><small>Los mensajes son privados entre ustedes 🔒</small></div>';
+    return;
+  }
+  var scrollAtBottom=el.scrollHeight-el.scrollTop<=el.clientHeight+50;
+  el.innerHTML=msgs.map(function(m){
+    var mine=m.from===me.email, av=mine?getIni(me.nombre):getIni(m.fromNombre||'?');
+    // Detect meet links
+    var txt=m.texto;
+    if(txt.indexOf('meet.google.com')>=0){
+      txt=txt.replace(/(https:\/\/meet\.google\.com\/\S+)/g,'<a href="$1" target="_blank" style="color:var(--accent)">$1</a>');
+    }
+    return '<div class="msg'+(mine?' mine':'')+'"><div class="msg-av">'+av+'</div>'+
+      '<div><div class="bubble">'+txt+'</div><div class="msg-time">'+m.hora+'</div></div></div>';
+  }).join('');
+  if(scrollAtBottom) el.scrollTop=el.scrollHeight;
+}
+
+async function enviarMsg(){
+  var input=document.getElementById('chat-input'), txt=input.value.trim(); if(!txt) return;
+  var me=getMe(); if(!me){toast('Inicia sesión.',true);openModal('modal-login');return;}
+  if(!activeChatEmail){toast('Selecciona un contacto.',true);return;}
+  var hora=new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+  input.value='';
+  await api('sendMsg',{from:me.email,to:activeChatEmail,fromNombre:me.nombre,texto:txt,hora:hora});
+  renderMsgs();
+}
+function chatEnter(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();enviarMsg();}}
+
+// ── RECURSOS ─────────────────────────────────────────────────────
+var editingId=null;
+function filtrarRecursos(btn,cat){
+  recFiltro=cat;
+  document.querySelectorAll('#rec-filters .cat-btn').forEach(function(b){b.classList.remove('active');}); btn.classList.add('active'); renderRecursos(cat);
+}
+
+async function renderRecursos(cat){
+  if(cat) recFiltro=cat;
+  var grid=document.getElementById('recursos-grid'), me=getMe();
+  grid.innerHTML='<div class="loading"><div class="spinner"></div><p>Cargando recursos...</p></div>';
+  var res=await api('getRecursos',{cat:recFiltro});
+  if(!res.ok||!res.data){grid.innerHTML='<div class="empty"><div class="empty-icon">❌</div><p>Error al cargar recursos.</p></div>';return;}
+  var data=res.data;
+  if(!data.length){
+    var msg='<div class="empty"><div class="empty-icon">📂</div><p>No hay recursos en '+CAT_LABEL[recFiltro]+' aún.</p>';
+    if(me&&me.rol==='tutor') msg+='<button class="btn btn-primary" style="margin-top:1rem" onclick="abrirSubir()">+ Subir el primero</button>';
+    msg+='</div>'; grid.innerHTML=msg; return;
+  }
+  grid.innerHTML='';
+  data.forEach(function(r){
+    var card=document.createElement('div'); card.className='rcard';
+    // Solo tutores ven botones de editar/eliminar
+    var editHtml='';
+    if(me&&me.rol==='tutor'){
+      editHtml='<div style="display:flex;gap:.3rem">'+
+        '<button class="btn btn-sm" style="background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);color:var(--accent)" data-edit="'+r.id+'">✏️</button>'+
+        '<button class="btn btn-sm" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#f87171" data-del="'+r.id+'">🗑️</button>'+
+      '</div>';
+    }
+    var dlBtn=r.link
+      ?'<a href="'+r.link+'" target="_blank" class="dl-btn">🔗 Abrir</a>'
+      :'<span style="font-size:.75rem;color:var(--muted)">Sin enlace</span>';
+    card.innerHTML=
+      '<div class="rcard-head"><div class="rcard-icon '+(ICON_CLASS[r.tipo]||'icon-pdf')+'">'+(ICON_MAP[r.tipo]||'📄')+'</div>'+editHtml+'</div>'+
+      '<div class="rcard-title">'+r.titulo+'</div>'+
+      '<div class="rcard-meta">'+(r.tipo||'pdf').toUpperCase()+' · '+r.fecha+'</div>'+
+      '<div class="rcat-badge">'+(CAT_LABEL[r.cat]||r.cat)+'</div>'+
+      '<div class="rcard-foot"><span class="rcard-author">Por '+r.autor+'</span>'+dlBtn+'</div>';
+    var eb=card.querySelector('[data-edit]');
+    var db2=card.querySelector('[data-del]');
+    if(eb) eb.onclick=function(){editarRecurso(r);};
+    if(db2) db2.onclick=function(){eliminarRecurso(r.id);};
+    grid.appendChild(card);
+  });
+}
+
+function abrirSubir(){
+  var me=getMe();
+  if(!me){toast('Inicia sesión.',true);openModal('modal-login');return;}
+  if(me.rol!=='tutor'){toast('Solo los tutores pueden subir recursos.',true);return;}
+  editingId=null;
+  document.getElementById('rec-titulo').value='';
+  document.getElementById('rec-link').value='';
+  document.getElementById('subir-title').innerHTML='Subir <span>Recurso</span>';
+  document.getElementById('subir-btn').textContent='Subir recurso';
+  openModal('modal-subir');
+}
+
+function editarRecurso(r){
+  editingId=r.id;
+  document.getElementById('rec-titulo').value=r.titulo;
+  document.getElementById('rec-cat').value=r.cat;
+  document.getElementById('rec-tipo').value=r.tipo;
+  document.getElementById('rec-link').value=r.link||'';
+  document.getElementById('subir-title').innerHTML='Editar <span>Recurso</span>';
+  document.getElementById('subir-btn').textContent='Guardar cambios';
+  openModal('modal-subir');
+}
+
+async function eliminarRecurso(id){
+  if(!confirm('¿Eliminar este recurso para TODOS los usuarios?')) return;
+  var res=await api('deleteRecurso',{id:id});
+  if(!res.ok){toast('Error al eliminar.',true);return;}
+  renderRecursos(null); toast('Recurso eliminado para todos.');
+}
+
+async function guardarRecurso(){
+  var titulo=document.getElementById('rec-titulo').value.trim();
+  var cat=document.getElementById('rec-cat').value;
+  var tipo=document.getElementById('rec-tipo').value;
+  var link=document.getElementById('rec-link').value.trim();
+  if(!titulo){toast('Ingresa un título.',true);return;}
+  var me=getMe();
+  var r={id:editingId,titulo:titulo,cat:cat,tipo:tipo,link:link,autor:me?me.nombre:'Anónimo',fecha:'ahora'};
+  var action=editingId?'updateRecurso':'addRecurso';
+  var res=await api(action,r);
+  if(!res.ok){toast('Error al guardar.',true);return;}
+  editingId=null; closeModal('modal-subir');
+  recFiltro=cat;
+  document.querySelectorAll('#rec-filters .cat-btn').forEach(function(b){
+    var t=b.textContent;
+    b.classList.toggle('active',(cat==='matematica'&&t.indexOf('Matem')>=0)||(cat==='ciencias'&&t.indexOf('Cien')>=0)||(cat==='letras'&&t.indexOf('Letras')>=0)||(cat==='fisica'&&t.indexOf('sica')>=0)||(cat==='quimica'&&t.indexOf('mica')>=0));
+  });
+  renderRecursos(null);
+  toast(editingId?'Recurso actualizado.':'¡Recurso subido para todos!');
+}
+
+// ── CONFIGURACIÓN GAS (primer uso) ───────────────────────────────
+function checkGASConfig(){
+  if(!GAS_URL){
+    var banner=document.createElement('div');
+    banner.style.cssText='position:fixed;bottom:60px;left:0;right:0;background:#1a2235;border-top:1px solid rgba(0,229,255,.2);padding:1rem 1.5rem;z-index:300;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;';
+    banner.innerHTML=
+      '<div><div style="font-weight:600;font-size:.9rem;margin-bottom:.2rem">⚡ Modo local activo</div>'+
+      '<div style="font-size:.78rem;color:var(--muted)">Para compartir datos entre todos los dispositivos, configura el backend. <a href="#" id="config-link" style="color:var(--accent)">Ver instrucciones</a></div></div>'+
+      '<button id="config-close" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2rem;">✕</button>';
+    document.body.appendChild(banner);
+    document.getElementById('config-close').onclick=function(){banner.remove();};
+    document.getElementById('config-link').onclick=function(e){e.preventDefault();mostrarInstrucciones();};
+  }
+}
+
+function mostrarInstrucciones(){
+  var d=document.createElement('div');
+  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
+  d.innerHTML=
+    '<div style="max-width:560px;width:100%;background:#111827;border:1px solid rgba(0,229,255,.2);border-radius:18px;padding:2rem;max-height:90vh;overflow-y:auto;">'+
+    '<div style="font-family:Syne,sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:1rem">⚡ Configurar backend</div>'+
+    '<div style="font-size:.83rem;color:var(--muted);line-height:1.9;margin-bottom:1.25rem">'+
+    '<b style="color:var(--accent)">Opción 1: Google Apps Script (recomendado)</b><br>'+
+    '1. Ve a <a href="https://script.google.com" target="_blank" style="color:var(--accent)">script.google.com</a> → Nuevo proyecto<br>'+
+    '2. Pega el código del backend (te lo da Claude)<br>'+
+    '3. Despliega → Aplicación web → Cualquiera puede acceder<br>'+
+    '4. Copia la URL y pégala abajo<br><br>'+
+    '<b style="color:var(--accent)">Opción 2: Pide el URL a tu profesor o admin</b>'+
+    '</div>'+
+    '<input id="gas-url-input" style="width:100%;background:#1a2235;border:1px solid rgba(0,229,255,.2);border-radius:8px;padding:.7rem .9rem;color:#f0f4ff;font-family:monospace;font-size:.82rem;outline:none;margin-bottom:.75rem" placeholder="https://script.google.com/macros/s/...">'+
+    '<div style="display:flex;gap:.75rem">'+
+    '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="flex:1;padding:.75rem;background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--muted);cursor:pointer;font-family:DM Sans,sans-serif">Cancelar</button>'+
+    '<button id="gas-save-btn" style="flex:1;padding:.75rem;background:#00e5ff;color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif">Guardar y conectar</button>'+
+    '</div></div>';
+  document.body.appendChild(d);
+  document.getElementById('gas-save-btn').onclick=function(){
+    var url=document.getElementById('gas-url-input').value.trim();
+    if(!url){alert('Ingresa la URL.');return;}
+    localStorage.setItem('pluni_gas_url',url); GAS_URL=url;
+    d.remove(); toast('¡Backend conectado! Recargando...'); setTimeout(function(){location.reload();},1500);
+  };
+}
+
+// ── INIT ─────────────────────────────────────────────────────────
+updateNav();
+renderTutores();
+renderRecursos('matematica');
+// Backend conectado automaticamente
+// Refresh tutores/recursos every 60s
+setInterval(function(){if(currentPage==='tutores')renderTutores();if(currentPage==='recursos')renderRecursos(null);},60000);
+</script>
+</body>
+</html>
